@@ -33,19 +33,30 @@
 
 ; -------------------------------------------------------------------------------------
 ; 2 Großkreisentfernung und Kurse
+; -------------------------------------------------------------------------------------
 ; 2.1 Großkreisentfernung
 ; cos dG = sin ’A ∗ sin ’B + cos ’A ∗ cos ’B ∗ cos ∆λ
 
-(define distanzEquation (define (distanzABEquation A B gLaenge)
-  (+ (* (sin A) (sin B)) (* (cos A) (cos B) (cos gLaenge)))))
+(define MEANRADIUS 6.371)
+; latA: Latitude for Point A
+; latB: Latitude for Point B
 
-(define (distanzAB distanzEquation)
-  (* distanzEquation 60))
+(define (gLaengeInBogenmass lonB lonA)
+         (GradToBogenmass (- lonB lonA)))
 
-; von Oslo (59:93oN, 10:75oE) nach Hongkong (22:20oN,114:10oE)
-(distanzEquation (distanzABEquation 59.93
+(define (distanzAB latA latB lonA lonB) (+  (* (sin (GradToBogenmass 33.75)) (sin (GradToBogenmass 33.75))) (* (cos (GradToBogenmass 33.75)) (cos (GradToBogenmass 33.75)) (cos (GradToBogenmass (- 33.75 33.75))))))
+
+
+; von Oslo (59:93N, 10:75E) nach Hongkong (22:20N,114:10E)
+(write "distance from Oslo to Hongkon: ")
+(distanzAB 59.93 22.20 10.75 114.10)
                                     
-; von San Francisco(37:75oN, 122:45oW) nach Honolulu (21:32oN, 2157:83oW)
-                                    
-; von der Osterinsel (27:10oS, 109:40oW) nach Lima (12:10oS, 77:05oW)
-                                    
+; von San Francisco(37:75N, 122:45W) nach Honolulu (21:32N, 2157:83W)
+(write "distance from San Francisco to Honolulu ")
+(distanzAB 37.75 21.32 122.45 2157.83)
+
+; von der Osterinsel (27:10S, 109:40W) nach Lima (12:10S, 77:05W)
+(write "distance from Osterinsel to Lima: ")
+(distanzAB 27.10 12.10 109.40 77.05)
+
+; 2.2 Anfangskurs
