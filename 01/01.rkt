@@ -44,7 +44,7 @@
 (define (gLaengeInBogenmass lonB lonA)
          (GradToBogenmass (- lonB lonA)))
 
-(define (distanzAB latA latB lonA lonB) (+  (* (sin (GradToBogenmass 33.75)) (sin (GradToBogenmass 33.75))) (* (cos (GradToBogenmass 33.75)) (cos (GradToBogenmass 33.75)) (cos (GradToBogenmass (- 33.75 33.75))))))
+(define (distanzAB latA latB lonA lonB) (+  (* (sin (GradToBogenmass latA)) (sin (GradToBogenmass latB))) (* (cos (GradToBogenmass latA)) (cos (GradToBogenmass latB)) (cos (GradToBogenmass (- lonB lonA))))))
 
 
 ; von Oslo (59:93N, 10:75E) nach Hongkong (22:20N,114:10E)
@@ -60,3 +60,5 @@
 (distanzAB 27.10 12.10 109.40 77.05)
 
 ; 2.2 Anfangskurs
+(define (Anfangskurs latA latB lonA lonB))
+(sin 
