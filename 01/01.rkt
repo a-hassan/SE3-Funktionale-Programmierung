@@ -43,7 +43,7 @@
    (/ 1 (+ (expt (tan x) 2) 1))))
 
 ; arcos
-(define (my-acos x)   ; die acos Funktion gibt es schon, ich bin mir nicht sicher wie das mit Redefinition funktioniert.
+(define (my-acos x)   
          (* 2 (atan (sqrt (/ (- 1 x) (+ 1 x))))))
 
 ;; 1.3 Kilometer und Seemeilen
