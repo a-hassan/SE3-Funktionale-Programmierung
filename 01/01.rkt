@@ -60,5 +60,6 @@
 (distanzAB 27.10 12.10 109.40 77.05)
 
 ; 2.2 Anfangskurs
-(define (Anfangskurs latA latB lonA lonB))
-(sin 
+(define (Anfangskurs latA latB lonA lonB) (/ (- (sin latB) (* (cos(distanzAB latA latB lonA lonB)) (sin latA))) (* (cos latA) (sin (distanzAB latA latB lonA lonB)))))
+
+
