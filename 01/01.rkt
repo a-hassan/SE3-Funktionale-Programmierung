@@ -61,5 +61,7 @@
 
 ; 2.2 Anfangskurs
 (define (Anfangskurs latA latB lonA lonB) (/ (- (sin latB) (* (cos(distanzAB latA latB lonA lonB)) (sin latA))) (* (cos latA) (sin (distanzAB latA latB lonA lonB)))))
+(define (AnfangskursAngle anfangsAngle latA latB lonA lonB) (acos ((BogenmassTOGrad (Anfangskurs latA latB lonA lonB)))) (if (and ((AnfangskursAngle anfangsAngle) > 0 ) (AnfangskursAngle anfangsAngle) < 180 ) anfangsAngle (- (360 anfangsAngle))))
+
 
 
