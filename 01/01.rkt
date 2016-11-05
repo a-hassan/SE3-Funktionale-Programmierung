@@ -4,6 +4,7 @@
 ;;; Übungen zu Softwareentwicklung III,
 ;;; Funktionale Programmierung
 ;;; Blatt 1, Woche 2
+;;; Ahmed Hassan, Tim Kilian, Yuki Washio
 ;;; ==============================================================================
 
 ;;; 1 Konversionsfunktionen
