@@ -1,0 +1,34 @@
+#lang racket
+
+(require a03-AhmedTimYuki)
+
+;;; 1 Auswertung von Ausdrücken
+
+;; 1. 
+(max (min 5 (- 6 7)) 8)
+; (max (min 5 (- 6 7)) 8) → (max (min 5 -1) 8) → (max -1 8) → 8
+;; 2. 
+'(+ (- 11 13) 17)
+; '(+ (- 11 13) 17)
+;; 3.
+(cadr '(Alle Jahre wieder))
+; (cadr '(Alle Jahre wieder)) → (car (cdr '(Alle Jahre wieder))) → (car '(Jahre wieder)) → 'Jahre
+;; 4.
+(cddr '(kommt (das Christuskind)))
+; (cddr '(kommt (das Christuskind))) → (cdr (cdr '(kommt (das Christuskind)))) → (cdr '((das Christuskind))) → '()
+;; 5.
+(cons 'Auf '(die Erde nieder))
+; (cons 'Auf '(die Erde nieder)) → '(Auf die Erde nieder))
+;; 6.
+(cons 'Wo 'wir)
+; (cons 'Wo 'wir) → '(Wo . wir)
+;; 7.
+(equal? (list 'Menschen 'sind) '(Menschen sind))
+; (equal? (list 'Menschen 'sind) '(Menschen sind)) → (equal? '(Menschen sind) '(Menschen sind)) → #t
+;; 8.
+(eq? (list 'Rudolph 'Das 'Rentier) (cons 'Rudolph '(Das Rentier)))
+; (eq? (list 'Rudolph 'Das 'Rentier) (cons 'Rudolph '(Das Rentier))) → (eq? '(Rudolph Das Rentier) '(Rudolph Das Rentier)) → #f
+
+;;; 2 Textgenerierung
+
+;; 1. Überschrift
