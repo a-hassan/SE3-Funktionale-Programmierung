@@ -1,0 +1,89 @@
+#lang racket
+
+(require se3-bib/butterfly-module)
+
+#| 1 Mendels Land |#
+
+#| 
+Verschiedene Merkmale (genes) pro Merkmalstyp (characteristic-type):
+Musterung: Sterne, Punkte oder Streifen.
+Flügelfarbe: rot, gelb, grün oder blau.
+Fühlerform: gerade, gekrümmt, geschweift.
+Flügelform: rhombisch, elliptisch, hexagonal.
+
+Jeder Schmetterling hat 2 Gene pro Merkmalstyp:
+- ein dominantes Merkmal (sichtbar)
+- und ein rezessives Merkmal (nicht sichtbar bzw. gleich dem ersten)
+
+Es gelten folgende Dominanzregeln: (> = "dominiert")
+Sterne > Punkte > Streifen
+grün > rot > blau > gelb
+gekrümmt > geschweift > gerade
+rhombisch > elliptisch > hexagonal
+
+Jeder neugeborene Schmetterling bekommt jeweils 1 der 2 Gene pro Merkmalstyp von jedem Elternteil
+
+Ein Schmetterling hat 8 Gene:
+- jeweils 2 Gene pro Merkmalstyp (die 2 Gene können die gleichen sein)
+
+Der Input der Funktion sind die 2*4 dominanten Gene der Eltern und die Zahl der
+gewünschten Kinder
+
+|#
+
+
+; Implementierung:
+(define (make-new-butterfly motherGenes fatherGenes children)
+  (show-butterfly (car motherGenes) (cadr motherGenes) (caddr motherGenes) (cadddr motherGenes))
+  (show-butterfly (car fatherGenes) (cadr fatherGenes) (caddr fatherGenes) (cadddr fatherGenes))
+  (make-new-butterflyRec motherGenes fatherGenes children))
+
+; Rekursiv wird die gewünschte Anzahl Kinder generiert.
+(define (make-new-butterflyRec motherGenes fatherGenes children)
+  (generateChild motherGenes fatherGenes)
+  (if (> children 1) (make-new-butterflyRec motherGenes fatherGenes (- children 1)) #t))
+
+; Erzeugt ein neues Kind basierend auf den Genen der Eltern.
+(define (generateChild motherGenes fatherGenes)
+  (show-butterfly
+   (selectChildGene (car motherGenes) (car fatherGenes) muster)
+   (selectChildGene (cadr motherGenes) (cadr fatherGenes) farbe)
+   (selectChildGene (caddr motherGenes) (caddr fatherGenes) fuehler)
+   (selectChildGene (cadddr motherGenes) (cadddr fatherGenes) fluegel)
+   ))
+
+; Wählt ein Gen aus, welches an das Kind vererbt werden soll.
+(define (selectChildGene motherGene fatherGene pool)
+  (randomElement (list
+                  motherGene ; mutter dominant
+                  fatherGene ; vater dominant
+                  (randomElement (rezessiver motherGene pool)) ; mutter rezessiv
+                  (randomElement (rezessiver fatherGene pool))) ; vater rezessiv
+                 ))
+
+; Funktion zum zufälligen Wählen eines Elements aus einer liste
+(define (randomElement list)
+  (car (shuffle list)))
+
+; Definition der Dominanzregeln: kleinere Index = größere Dominanz
+(define muster (list 'stars 'dots 'stripes))
+(define farbe (list 'red 'yellow 'green 'blue))
+(define fuehler (list 'straight 'curved 'curly))
+(define fluegel (list 'rhomb 'ellipse 'hexagon))
+
+; Funktion zum generieren einer Liste von allen Elementen weniger Dominant als <merkmal>
+(define (rezessiver merkmal liste)
+  (if (empty? liste) #f
+        (cond 
+          [(equal? merkmal (car liste)) liste]
+          [else (rezessiver merkmal (cdr liste))])
+        ))
+
+
+; Tests
+(make-new-butterfly (list 'stripes 'blue 'curly 'hexagon) (list 'stripes 'blue 'curly 'hexagon) 3)
+; Wir wählen für Mutter und Vater die "rezessivsten" Merkmale. Alle Kinder sollten folglich gleich aussehen.
+
+
+(make-new-butterfly (list 'stars 'red 'straight 'rhomb) (list 'stripes 'blue 'curly 'hexagon) 3)
+; Wir wählen für die Mutter die dominantesten und für den Vater die rezessivsten Merkmale. Alle Kinder sollten folglich der Mutter gleichen.
