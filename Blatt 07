@@ -1,0 +1,23 @@
+#lang racket
+
+(require racket/trace)
+
+; 1 Abbilden
+
+; allgemein rekursive Funktion
+(define (produkt-rek xs n)
+  (if (null? xs)
+      '()
+      (cons (* n (car xs)) (produkt-rek (cdr xs) n))))
+
+(trace produkt-rek)
+(produkt-rek '(2 4 3) 3)
+
+; Funktionen höherer Ordnung
+(define (produkt-ho xs n)  
+  (map (lambda (list)
+         (* n list))
+       xs)) 
+       
+(trace produkt-ho)
+(produkt-ho '(2 4 3) 3)
