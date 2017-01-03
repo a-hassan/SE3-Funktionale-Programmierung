@@ -1,0 +1,50 @@
+#lang racket
+
+; 1 Funktionen höherer Ordnung und Closures
+
+; 1.1
+; Eine Funktion ist eine Funktion höherer Ordnung, wenn sie Funktionen als Parameter oder Rückgabewert hat.
+
+; 1.2
+; (a) ja, da der erste Parameter von foldr eine Funktion sein muss. 
+; (b) nein, da der einziger Parameter x einen numerischen Wert hat.
+; (c) ja, da der Rückgabewert eine Funktion ist und der Parameter f eine Funktion sein muss. 
+; (d) ja, da der Rückgabewert eine Funktion ist und der Parameter f zusätzlich eine Funktion sein muss.
+
+; 1.3
+(define (masala f a1) (lambda (a2) (f a1 a2)))
+((masala / 1) 3)
+; ((masala / 1) 3) → (#<procedure> 3) → (‌/ 1 3) → #e0.3
+; f := / ; a1 := 1 ; a2 := 3
+; Eine Closure hat eine Funktion als Rückgabewert.
+
+; 1.4
+(foldl (curry * 3) 1 '(1 2 3))
+; (foldl (curry * 3) 1 '(1 2 3)) → (foldl (lambda (x) (* 3 x)) 1 '(1 2 3)) → (foldl (lambda (x) (* 3 x)) (* 1 (* 3 1)) '(2 3))
+; → (foldl (lambda (x) (* 3 x)) (* 1 (* 3 1) (* 3 2)) '(3)) → (* 1 (* 3 1) (* 3 2) (* 3 3)) → 162
+(define (flip f) (lambda (x y) (f y x)))
+(map (flip cons) '(1 2 3) '(3 2 1)) 
+; (map (flip cons) '(1 2 3) '(3 2 1)) → (map (lambda (x y) (cons y x)) '(1 2 3) '(3 2 1))
+; → (map (lambda (1 3) (cons 3 1)) '(2 3) '(2 1)) → (cons (lambda (1 3) (cons 3 1)) (lambda (2 2) (cons 2 2)) (lambda (3 1) (cons 1 3)))
+; → (cons (cons 3 1) (cons (cons 2 2) (cons 1 3))) → '((3 . 1) (2 . 2) (1 . 3))
+(filter list? '((a b ) () 1 (())))
+; (filter list? '((a b ) () 1 (()))) → (cons '(a b) (filter list? '(() 1 (())))) → (cons '(a b) (cons '() (filter list? '(1 (())))))
+; → (cons '(a b) (cons '() (filter list? '((()))))) → (cons '(a b) (cons '() '((())))) → '((a b) () (()))
+(map (compose (curryr / 1.8) (curry - 32)) '(9941 212 32 -459.67))
+; (map (compose (curryr / 1.8) (curry - 32)) '(9941 212 32 -459.67))
+
+;;; 2 Einfache funktionale Ausdrücke höherer Ordnung
+(define xs '(-27 -26 -25 -14 -13 -12 -2 -1 0 1 2 12 13 14 25 26 27))
+; 2.1
+(map (lambda (x) (abs x)) xs)
+; 2.2
+(filter (lambda (x) (= (modulo x 13) 0)) xs)
+; 2.3
+(foldr + 0 (filter (lambda (x) (and (even? x) (> x 3))) xs))
+; 2.4
+(define (split l f)
+  (cons (filter (lambda (x)      (f x))  l)
+  (list (filter (lambda (x) (not (f x))) l))))
+(split xs odd?)
+
+;;; 3 Spieltheorie: Das Kartenspiel SET
