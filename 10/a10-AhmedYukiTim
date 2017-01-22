@@ -1,0 +1,100 @@
+#lang racket
+(require swindle/extra)
+
+; 1.1 Konsistenz eines Spielzustands
+
+(define spiel #(0 0 0 0 0 9 0 7 0
+                0 0 0 0 8 2 0 5 0
+                3 2 7 0 0 0 0 4 0
+                0 1 6 0 4 0 0 0 0
+                0 5 0 0 0 0 3 0 0
+                0 0 0 0 9 0 7 0 0
+                0 0 0 6 0 0 0 0 5
+                8 0 2 0 0 0 0 0 0
+                0 0 4 2 0 0 0 0 8))
+
+; 1.1.1
+
+(define (xy->index x y)
+  (+ x (* y 9)))
+
+(xy->index 0 0)
+(xy->index 3 1)
+(xy->index 8 8)
+
+; 1.1.2
+(define (indizes x f l)
+  (if (> (length l) 8)
+      (reverse l)
+      (indizes (f x) f (cons x l))))
+
+(define (zeile->indizes y)
+  (indizes (* y 9) (curry + 1) '()))
+(define (spalte->indizes x)
+  (indizes x (curry + 9) '()))
+
+(define (quadrant->indizes z)
+  (let ((sektor (floor (/ (xy->index z z) 27)))) ; sektor 0: zeile 0,1,2; sektor 1: zeile 3,4,5; sektor 2: zeile 6,7,8 
+    (map
+     (curry + (* 3 (modulo z 3)) (* 27 sektor)) ; teil + sektor indizes addieren mit quadrant position
+     (indizes 0 (λ (y)
+                  (let ((m (modulo y 9))) 
+                    (if (or (= m 0) (= m 1))
+                        ((curry + 1) y)
+                        ((curry + 7) y)))) '()))))
+
+(zeile->indizes 0)
+(spalte->indizes 5)
+(quadrant->indizes 8)
+
+; 1.1.3
+(define (spiel->eintraege spiel idx)
+  (map (λ (index) (vector-ref spiel index)) idx))
+
+(spiel->eintraege spiel (quadrant->indizes 8))
+
+; 1.1.4
+(define (zahl-spalte-einmal? spiel index)
+  (let ((spalte-ohne-null
+         (filter (compose not (curry = 0))
+                 (spiel->eintraege spiel (spalte->indizes index)))))
+    (if (= (length spalte-ohne-null)
+           (length (remove-duplicates spalte-ohne-null)))
+        #t #f)))
+(define (zahl-zeile-einmal? spiel index)
+  (let ((zeile-ohne-null
+         (filter (compose not (curry = 0))
+                 (spiel->eintraege spiel (zeile->indizes index)))))
+    (if (= (length zeile-ohne-null)
+           (length (remove-duplicates zeile-ohne-null)))
+        #t #f)))
+(define (zahl-quadrant-einmal? spiel index)
+  (let ((quadrant-ohne-null
+         (filter (compose not (curry = 0))
+                 (spiel->eintraege spiel (quadrant->indizes index)))))
+    (if (= (length quadrant-ohne-null)
+           (length (remove-duplicates quadrant-ohne-null)))
+        #t #f)))
+
+(define (spiel-konsistent? spiel)
+  (= 9
+     (length
+      (amb-collect
+       (let ((x (amb 0 1 2 3 4 5 6 7 8)))
+         (amb-assert (and
+                      (zahl-spalte-einmal? spiel x)
+                      (zahl-zeile-einmal? spiel x)
+                      (zahl-quadrant-einmal? spiel x)))
+         #t)))))
+(define (spiel-gelöst? spiel)
+  (if (and (= (length (filter (curry = 0) (vector->list spiel))) 0) spiel-konsistent? spiel) #t #f))
+
+(spiel-konsistent? spiel)
+(spiel-gelöst? spiel)
+
+; 1.2 Sudoku lösen (ohne Backtracking)
+
+(define (markiere-ausschluss spiel zahl)
+  )
+
+(markiere-ausschluss spiel 5)
